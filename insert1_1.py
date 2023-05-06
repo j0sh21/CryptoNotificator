@@ -6,6 +6,29 @@ password = config.dpassword
 host = config.dhost
 database = config.ddatabase
 
+def setup():
+    con = mariadb.connect(user=user, password=password, host=host, database=database)
+    cur = con.cursor()
+    e = "SELECT * from coins"
+    try:
+        cur.execute(e)
+        coins = cur.fetchall()
+        print("Starte...")
+    except:
+        e = "CREATE TABLE `coins` (`id` int(11) DEFAULT NULL,`coin` varchar(20) DEFAULT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+        cur.execute(e)
+        e = f"CREATE TABLE `users` (`id` int(11) NOT NULL AUTO_INCREMENT,`user` varchar(100) DEFAULT NULL,`password` varchar(255) DEFAULT NULL,`email` varchar(255) DEFAULT NULL,PRIMARY KEY (`id`)) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4"
+        cur.execute(e)
+        e = f"CREATE TABLE `confpy` (`new` int(11) DEFAULT NULL,`upper` double DEFAULT NULL,`lower` double DEFAULT NULL, `usid` int(11) NOT NULL, `curid` int(11) NOT NULL, PRIMARY KEY (`usid`,`curid`),  CONSTRAINT `confpy_ibfk_1` FOREIGN KEY (`usid`) REFERENCES `users` (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+        cur.execute(e)
+        e = "CREATE TABLE `log` (`ID` int(11) DEFAULT NULL,`time` datetime DEFAULT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+        cur.execute(e)
+        e = 'INSERT INTO log (ID, time) VALUES (1,"1990-05-06 00:00:00")'
+        cur.execute(e)
+        con.commit()
+        print("Setup abgeschlossen")
+
+
 def updateconf(usid_u, curid_u):
     con = mariadb.connect(user=user, password=password, host=host, database=database)
     cur = con.cursor()
@@ -106,49 +129,8 @@ def insert(price_i, date_i, symbol_i, volume_24h, volume_change_24h , percent_ch
     b = date_i
     c = b.replace('T', ' ')
     d = c.replace('Z', '')
-    if symbol_i == 'BTC':
-        print("BTC_insert")
-        a = round(a)
-        e = 'INSERT INTO btc (price, datum, volume_24h, volume_change_24h , percent_change_1h, percent_change_24h, percent_change_7d, percent_change_30d, percent_change_60d,percent_change_90d,market_cap,market_cap_dominance, cmc_rank) VALUES (' + str(a) + ",'" + str(d) + "'," + volume_24h+ "," + volume_change_24h + "," + percent_change_1h+ "," + percent_change_24h+ "," + percent_change_7d+ "," + percent_change_30d+ "," + percent_change_60d+ "," +percent_change_90d+ "," +market_cap+ "," +market_cap_dominance +"," +cmc_rank+ ")"
-        #print(e)        
-        cur.execute(e)
-        con.commit()
-    elif symbol_i == 'ETH':
-        a = round(a)
-        print("ETH_insert")
-        e = 'INSERT INTO eth (price, datum, volume_24h, volume_change_24h , percent_change_1h, percent_change_24h, percent_change_7d, percent_change_30d, percent_change_60d,percent_change_90d,market_cap,market_cap_dominance, cmc_rank) VALUES (' + str(a) + ",'" + str(d) + "'," + volume_24h+ "," + volume_change_24h + "," + percent_change_1h+ "," + percent_change_24h+ "," + percent_change_7d+ "," + percent_change_30d+ "," + percent_change_60d+ "," +percent_change_90d+ "," +market_cap+ "," +market_cap_dominance +"," +cmc_rank+ ")"
-        cur.execute(e)
-        con.commit()
-    elif symbol_i == 'BNB':
-        a = round(a)
-        print('BNB!_insert')
-        e = 'INSERT INTO bnb (price, datum, volume_24h, volume_change_24h , percent_change_1h, percent_change_24h, percent_change_7d, percent_change_30d, percent_change_60d,percent_change_90d,market_cap,market_cap_dominance, cmc_rank) VALUES (' + str(a) + ",'" + str(d) + "'," + volume_24h+ "," + volume_change_24h + "," + percent_change_1h+ "," + percent_change_24h+ "," + percent_change_7d+ "," + percent_change_30d+ "," + percent_change_60d+ "," +percent_change_90d+ "," +market_cap+ "," +market_cap_dominance +"," +cmc_rank+ ")"
-        cur.execute(e)
-        con.commit()
-    elif symbol_i == 'MATIC':
-        print('Matic!_insert')
-        e = 'INSERT INTO matic (price, datum, volume_24h, volume_change_24h , percent_change_1h, percent_change_24h, percent_change_7d, percent_change_30d, percent_change_60d,percent_change_90d,market_cap,market_cap_dominance, cmc_rank) VALUES (' + str(a) + ",'" + str(d) + "'," + volume_24h+ "," + volume_change_24h + "," + percent_change_1h+ "," + percent_change_24h+ "," + percent_change_7d+ "," + percent_change_30d+ "," + percent_change_60d+ "," +percent_change_90d+ "," +market_cap+ "," +market_cap_dominance +"," +cmc_rank+ ")"
-        cur.execute(e)
-        con.commit()
-    elif symbol_i == 'DOGE':
-        print('Doge!_insert')
-        e = 'INSERT INTO doge (price, datum, volume_24h, volume_change_24h , percent_change_1h, percent_change_24h, percent_change_7d, percent_change_30d, percent_change_60d,percent_change_90d,market_cap,market_cap_dominance, cmc_rank) VALUES (' + str(a) + ",'" + str(d) + "'," + volume_24h+ "," + volume_change_24h + "," + percent_change_1h+ "," + percent_change_24h+ "," + percent_change_7d+ "," + percent_change_30d+ "," + percent_change_60d+ "," +percent_change_90d+ "," +market_cap+ "," +market_cap_dominance +"," +cmc_rank+ ")"
-        cur.execute(e)
-        con.commit()
-    elif symbol_i == 'ATOM':
-        print('Atom!_insert')
-        e = 'INSERT INTO atom (price, datum, volume_24h, volume_change_24h , percent_change_1h, percent_change_24h, percent_change_7d, percent_change_30d, percent_change_60d,percent_change_90d,market_cap,market_cap_dominance, cmc_rank) VALUES (' + str(a) + ",'" + str(d) + "'," + volume_24h+ "," + volume_change_24h + "," + percent_change_1h+ "," + percent_change_24h+ "," + percent_change_7d+ "," + percent_change_30d+ "," + percent_change_60d+ "," +percent_change_90d+ "," +market_cap+ "," +market_cap_dominance +"," +cmc_rank+ ")"
-        cur.execute(e)
-        con.commit()
-    elif symbol_i == 'WBTC':
-        a = round(a)
-        print('Wbtc!_insert')
-        e = 'INSERT INTO wbtc (price, datum, volume_24h, volume_change_24h , percent_change_1h, percent_change_24h, percent_change_7d, percent_change_30d, percent_change_60d,percent_change_90d,market_cap,market_cap_dominance, cmc_rank) VALUES (' + str(a) + ",'" + str(d) + "'," + volume_24h+ "," + volume_change_24h + "," + percent_change_1h+ "," + percent_change_24h+ "," + percent_change_7d+ "," + percent_change_30d+ "," + percent_change_60d+ "," +percent_change_90d+ "," +market_cap+ "," +market_cap_dominance +"," +cmc_rank+ ")"
-        cur.execute(e)
-        con.commit()
-    else:
-        #e ='CREATE TABLE ' + str(symbol_i) + ' (price float, datum datetime)'
-        print(str(symbol_i) + '_insert')
-        e = 'INSERT INTO ' + str(symbol_i) + ' (price, datum, volume_24h, volume_change_24h , percent_change_1h, percent_change_24h, percent_change_7d, percent_change_30d, percent_change_60d,percent_change_90d,market_cap,market_cap_dominance, cmc_rank) VALUES (' + str(a) + ",'" + str(d) + "'," + volume_24h+ "," + volume_change_24h + "," + percent_change_1h+ "," + percent_change_24h+ "," + percent_change_7d+ "," + percent_change_30d+ "," + percent_change_60d+ "," +percent_change_90d+ "," +market_cap+ "," +market_cap_dominance +"," +cmc_rank+ ")"
-        cur.execute(e)
-        con.commit()
+
+    print(str(symbol_i) + '_insert')
+    e = 'INSERT INTO ' + str(symbol_i) + ' (price, datum, volume_24h, volume_change_24h , percent_change_1h, percent_change_24h, percent_change_7d, percent_change_30d, percent_change_60d,percent_change_90d,market_cap,market_cap_dominance, cmc_rank) VALUES (' + str(a) + ",'" + str(d) + "'," + volume_24h+ "," + volume_change_24h + "," + percent_change_1h+ "," + percent_change_24h+ "," + percent_change_7d+ "," + percent_change_30d+ "," + percent_change_60d+ "," +percent_change_90d+ "," +market_cap+ "," +market_cap_dominance +"," +cmc_rank+ ")"
+    cur.execute(e)
+    con.commit()
