@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <title>Crypto Dashboard | odemsloh.de</title>
+    <script>
+        window.onload = function() {
+            document.getElementById("welcome").innerHTML = "Willkommen " + getCookie("username");
+
+            $.ajax({
+                method: "POST",
+                url: "include/getCoins.php",
+            }).done(function (response) {
+                document.getElementById("curid").innerHTML += response;
+                console.log(response);
+            })
+            $.ajax({
+                method: "POST",
+                url: "include/getStats.php",
+                data: {userid: getCookie("userid")}
+            }).done(function (response) {
+                document.getElementById("infos").innerHTML += response;
+                console.log(response);
+            })
+
+            if (getCookie("userid")) {
+                document.getElementById("userid").value = getCookie("userid");
+            } else {
+                window.location.href = "login.html"
+            }
+
+            $.ajax({
+                method: "POST",
+                url: "include/showAlerts.php",
+                data: {userid: getCookie("userid")}
+            }).done(function (response) {
+                document.getElementById("alerts").innerHTML += response;
+            })
+        }
+
+        function getCookie(cname) {
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+
+            for(let i = 0; i <ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+                }
+            }
+
+            return false;
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <button style="margin-right: 10px;" class="center" onclick="window.location.href = '../index.php'">Zurück zur Übersicht</button>
+        <button class="center" onclick="logout()">Ausloggen</button>
+    </div>
+    <h3 id="welcome" style="color: var(--Copy-of-Crypto-Condos-5-hex);"></h3>
+        <form id="updateForm" action="include/updateMailSender.php" method="POST">
+            <table class="center">
+                <tr>
+                    <td>Max-Preis: </td>
+                    <td><input type="double" name="max_price" id="max"></td>
+                </tr>
+                <tr>
+                    <td>Min-Preis: </td>
+                    <td><input type="double" name="min_price" id="min"></td>
+                </tr>
+                <tr>
+                    <td><input type="hidden" name="userid" id="userid"></td>
+                </tr>
+                <tr>
+                    <td>Coin: </td>
+                    <td>
+                        <select name="curid" id="curid">
+                            
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td><br><input style="color: var(--Copy-of-Crypto-Condos-6-hex); background-color: var(--Copy-of-Crypto-Condos-4-hex); border: 0; border-radius: 20px; box-shadow: 2px 2px var(--Copy-of-Crypto-Condos-1-hex);" type="button" value="Aktualisieren" onclick="updateSender()"></td>
+                    <td>&nbsp;</td>
+                </tr>
+            </table>
+        </form>
+        <div class="alerts">
+            <h3>Deine Alerts</h3>
+            <table class="center" id="alerts">
+                <tr>
+                    <th>Aktiv</th>
+                    <th>Max-Preis</th>
+                    <th>Min-Preis</th>
+                    <th>Währung</th>
+                    <th>Entfernen</th>
+                    <th>Aktivieren</th>
+                </tr>
+            </table>
+        </div>
+        <div class="infos">
+            <h3>Aktuelle Stats</h3>
+            <table class="center" id="infos">
+                <tr>
+                    <th>Coin</th>
+                    <th>USD</th>
+                    <th>1h</th>
+                    <th>24h</th>
+                    <th>7d</th>
+                    <th>30d</th>
+                    <th>60d</th>
+                    <th>90d</th>
+                </tr>
+            </table>
+        </div>
+</body>
+</html>
